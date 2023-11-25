@@ -6,6 +6,9 @@ const app = express();
 
 
 const userRoute = require('./routes/userRouter');
+const postRouter = require('./routes/postRouter');
+const announceRoute = require('./routes/announcementRoute');
+const paymentRoute = require('./routes/paymentRoute');
 
 // Middlewire
 app.use(express.json());
@@ -15,6 +18,9 @@ app.use(cors());
 
 // Routes
 app.use('/', userRoute)
+app.use("/", postRouter )
+app.use('/', announceRoute)
+app.use('/', paymentRoute)
 
 
 
