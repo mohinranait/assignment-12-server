@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const PostVoteHistory = require("../models/PostVoteHistory");
 
 // Create a new post
 const createNewPost = async (req, res) => {
@@ -20,10 +21,26 @@ const createNewPost = async (req, res) => {
 // get all posts
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find({});
+        const page = req.query?.page || 1;
+        const limit = 5;
+        const posts = await Post.find({}).skip((page-1)*limit).limit(limit).sort('-_id');
+        const count = await Post.find().countDocuments();
+        // const aggre = await Post.aggregate([
+        //     {
+        //       $addFields: {
+        //         voteDifference: { $subtract: ['$upVote', '$downVote'] }
+        //       }
+        //     },
+        //     {
+        //       $sort: { voteDifference: -1 }
+        //     }
+        // ])
+        // console.log(aggre);
+
         res.send({
             success : true,
             data: posts,
+            total:count,
         })
     } catch (error) {
         res.send({
@@ -108,8 +125,6 @@ const getSinglePostById = async (req, res) => {
 const updatePostsById = async (req, res) => {
     try {
         const id = req.params?.id;
-       
-
         const post = await Post.findByIdAndUpdate(id, req.body, {
             new : true,
             runValidators: true,
@@ -134,6 +149,74 @@ const updatePostsById = async (req, res) => {
 }
 
 
+// Delete posts
+const deletePostsById = async(req, res) => {
+    try {
+        const id = req?.params?.id;
+        const post = await Post.findByIdAndDelete(id);
+        if(!post){
+            return res.status(404).send({
+                success: false,
+                message : "Not found"
+            })
+        };
+
+        res.send({
+            success: true,
+            message : "Delete successfull",
+        })
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message : "wrong info"
+        })
+    }
+}
+
+
+const makeVoteInPosts = async (req, res) => {
+    try {
+        const id  = req.params?.id;
+        const {value, upVote, downVote,userEmail} = req.body;
+
+        const existsVoteHistory = await PostVoteHistory.findOne({userEmail, postId:id});
+        if( !existsVoteHistory ){
+            let updateDoc = {}
+            if(value == 'upvote'){
+                updateDoc.upVote = Number(upVote+1);
+            }else{
+                updateDoc.downVote = Number(downVote+1);
+            }
+            await Post.findByIdAndUpdate(id, updateDoc );
+            await PostVoteHistory.create({userEmail, postId:id, vote:value})
+            return res.status(200).send({
+                success: true,
+                message  : "Success"
+            })
+        }
+
+        let updateDoc = {};
+        if(existsVoteHistory.vote == 'upvote' && value == 'downvote'){
+            updateDoc.upVote = Number(upVote-1);
+            updateDoc.downVote = Number(downVote+1);
+        }else if(existsVoteHistory.vote == 'downvote' && value == 'upvote'){
+            updateDoc.upVote = Number(upVote+1);
+            updateDoc.downVote = Number(downVote-1);
+        }
+        await Post.findByIdAndUpdate(id, updateDoc );
+        await PostVoteHistory.findByIdAndUpdate(existsVoteHistory?._id , { vote:value})
+        res.send({
+            message : "Update votes"
+        })
+        
+    } catch (error) {
+        res.send({
+            message : "already comment update"
+        })
+    }
+}
+
+
 
 module.exports = {
     createNewPost,
@@ -142,5 +225,7 @@ module.exports = {
     updatePostsById,
     getOwnerPostsCount,
     getAllOwnerPosts,
-    getAllOwnerDesc
+    getAllOwnerDesc,
+    deletePostsById,
+    makeVoteInPosts
 }
