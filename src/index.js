@@ -9,10 +9,18 @@ const userRoute = require('./routes/userRouter');
 const postRouter = require('./routes/postRouter');
 const announceRoute = require('./routes/announcementRoute');
 const paymentRoute = require('./routes/paymentRoute');
+const commentRoute = require('./routes/CommentRoute');
 
 // Middlewire
+app.use(
+    cors({
+      origin: ['http://localhost:5173'],
+    //   credentials: true,
+      // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    })
+);
 app.use(express.json());
-app.use(cors());
+
 
 
 
@@ -21,6 +29,7 @@ app.use('/', userRoute)
 app.use("/", postRouter )
 app.use('/', announceRoute)
 app.use('/', paymentRoute)
+app.use('/', commentRoute)
 
 
 
