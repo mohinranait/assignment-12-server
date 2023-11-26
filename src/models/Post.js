@@ -34,6 +34,10 @@ const postSchema = new Schema({
     },
     createAt:{
         type: Date,
+    },
+    visivility:{
+        type: Boolean,
+        default : true, // true value for public post
     }
 })
 

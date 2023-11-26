@@ -1,11 +1,9 @@
-const Announcement = require("../models/Announcement");
+const Tag = require("../models/Tag");
 
-
-
-const createAnnouncement = async (req, res) => {
+const createTag = async (req, res) => {
     try {
         const data = req.body;
-        const announcement  = await Announcement.create(data);
+        const tag  = await Tag.create(data);
         res.send({
             success : true,
             message : "Create Successfull",
@@ -18,20 +16,18 @@ const createAnnouncement = async (req, res) => {
     }
 }
 
-const getAllAnnouncement = async (req, res) => {
+// Get all tags
+const getAllTags = async (req, res) => {
     try {
-        const announcements = await Announcement.find({});
-        res.send(announcements)
+        const tags = await Tag.find({});
+        res.send(tags)
     } catch (error) {
         res.status(500).send({
             success : false,
             message : "somthin wrong",
-        })
+        })   
     }
 }
 
 
-module.exports =  {
-    createAnnouncement,
-    getAllAnnouncement,
-}
+module.exports = {createTag,getAllTags}

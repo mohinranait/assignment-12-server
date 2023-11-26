@@ -1,19 +1,19 @@
 const postRouter = require('express').Router();
 
 const { createNewPost, getAllPosts, getSinglePostById,getAllOwnerPosts, updatePostsById, getOwnerPostsCount, getAllOwnerDesc, deletePostsById, makeVoteInPosts } = require('../controllers/PostController');
+const { verifyToken } = require('../middleware/verifyToken');
 
 
 
-postRouter.post("/posts", createNewPost);
+postRouter.post("/posts", verifyToken,  createNewPost);
 postRouter.get("/posts", getAllPosts);
 postRouter.get("/posts/:id", getSinglePostById);
-postRouter.patch("/posts/:id", updatePostsById);
+postRouter.patch("/posts/:id", verifyToken, updatePostsById);
 postRouter.get("/posts-count/:email", getOwnerPostsCount)
-postRouter.get("/owner-posts/:email", getAllOwnerPosts);
-postRouter.get("/owner-posts-desc/:email", getAllOwnerDesc);
-postRouter.delete("/posts/:id", deletePostsById);
-postRouter.post("/post-votes/:id", makeVoteInPosts);
-
+postRouter.get("/owner-posts/:email", verifyToken, getAllOwnerPosts);
+postRouter.get("/owner-posts-desc/:email", verifyToken, getAllOwnerDesc);
+postRouter.delete("/posts/:id",verifyToken, deletePostsById);
+postRouter.post("/post-votes/:id",verifyToken, makeVoteInPosts);
 
 
 

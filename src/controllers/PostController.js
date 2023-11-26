@@ -23,8 +23,8 @@ const getAllPosts = async (req, res) => {
     try {
         const page = req.query?.page || 1;
         const limit = 5;
-        const posts = await Post.find({}).skip((page-1)*limit).limit(limit).sort('-_id');
-        const count = await Post.find().countDocuments();
+        const posts = await Post.find({visivility:true}).skip((page-1)*limit).limit(limit).sort('-_id');
+        const count = await Post.find({visivility:true}).countDocuments();
         // const aggre = await Post.aggregate([
         //     {
         //       $addFields: {
@@ -217,7 +217,6 @@ const makeVoteInPosts = async (req, res) => {
 }
 
 
-
 module.exports = {
     createNewPost,
     getAllPosts,
@@ -227,5 +226,6 @@ module.exports = {
     getAllOwnerPosts,
     getAllOwnerDesc,
     deletePostsById,
-    makeVoteInPosts
+    makeVoteInPosts,
+
 }

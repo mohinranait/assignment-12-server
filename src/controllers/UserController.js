@@ -23,7 +23,13 @@ const getAllUsers = async (req, res) => {
 const createUser =  async (req, res) => {
     const user = req.body;
     try {
-        
+        const isExists = await User.findOne({email:user?.email});
+        if(isExists){
+            return res.send({
+                success: true,
+                message : "already exists",
+            })
+        }
         const result = await  User.create(user)
         res.send({
             success: true,
@@ -96,7 +102,7 @@ const existsUserForUserName = async (req, res) => {
 // is Admin check
 const checkAdmin = async (req, res) => {
     try {
-        console.log(req?.params?.email);
+        // console.log(req?.params?.email);
         const user = await User.findOne({email:req.params?.email});
         if(!user){
             return res.status(404).send({
