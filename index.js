@@ -1,15 +1,16 @@
 const express = require('express');
 const cors = require('cors');
-const { serverPort } = require('./secret');
-const connectDatabase = require('./config/database');
 const app = express();
 
+const { serverPort } = require('./src/secret');
+const connectDatabase = require('./src/config/database');
+const postRouter = require('./src/routes/postRouter');
+const announceRoute = require('./src/routes/announcementRoute');
+const paymentRoute = require('./src/routes/paymentRoute');
+const commentRoute = require('./src/routes/CommentRoute');
+const userRoute = require('./src/routes/userRouter');
 
-const userRoute = require('./routes/userRouter');
-const postRouter = require('./routes/postRouter');
-const announceRoute = require('./routes/announcementRoute');
-const paymentRoute = require('./routes/paymentRoute');
-const commentRoute = require('./routes/CommentRoute');
+
 
 // Middlewire
 app.use(
@@ -20,8 +21,6 @@ app.use(
     })
 );
 app.use(express.json());
-
-
 
 
 // Routes
