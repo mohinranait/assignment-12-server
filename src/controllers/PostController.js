@@ -22,8 +22,12 @@ const createNewPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
     try {
         const page = req.query?.page || 1;
+        const search = req?.query?.search;
         const limit = 5;
-        const posts = await Post.find({visivility:true}).skip((page-1)*limit).limit(limit).sort('-_id');
+        const searchVal = new RegExp(".*"+search+".*", 'i');
+
+        
+        const posts = await Post.find({visivility:true, tag:searchVal}).skip((page-1)*limit).limit(limit).sort('-_id');
         const count = await Post.find({visivility:true}).countDocuments();
         // const aggre = await Post.aggregate([
         //     {

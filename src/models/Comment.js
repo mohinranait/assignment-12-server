@@ -6,6 +6,9 @@ const commentSchema = new Schema({
     comment : {
         type:String,
     },
+    feedback: {type:String},
+    repoterEmail: {type:String},
+    visibility: {type:Boolean, default:true},
 })
 
 const Comment = model("Comment", commentSchema);

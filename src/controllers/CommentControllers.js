@@ -31,7 +31,7 @@ const createNewCommentUnderPosts = async (req, res) => {
 const totalCommentForSinglePosts = async (req, res) => {
     try {
         const id = req.params?.id;
-        const comments = await Comment.find({postId:id});
+        const comments = await Comment.find({postId:id,visibility:true});
         res.send(comments);
     } catch (error) {
         return res.status(500).send({
@@ -42,7 +42,56 @@ const totalCommentForSinglePosts = async (req, res) => {
 }
 
 
+// Reported comments get method
+const getReportedCommentForAdmins = async (req, res) => {
+    try {
+        // const id = req.params?.id;
+        const comments = await Comment.find({visibility:false});
+        res.send(comments);
+    } catch (error) {
+        return res.status(500).send({
+            success: false,
+            message : "Somthing wrong",
+        })
+    }
+}
+
+
+// Update Comments using id
+const updatePostCommentsById = async (req, res) => {
+    try {
+        const id = req.params?.id;
+        // const body = ;
+        // console.log(id);
+        const comment = await Comment.findByIdAndUpdate(id, req.body, {
+            new : true,
+            runValidators: true,
+        })
+
+        // console.log(comment);
+
+        if(!comment){
+            return res.status(404).send({
+                success : false,
+                message : "Notfound comment",
+            })
+        }
+
+        res.send({
+            message : "update successfull",
+            success: true,
+        })
+    } catch (error) {
+        res.status(500).send({
+            message : "Somthing wrong",
+            success: false,
+        })
+    }
+}
+
 module.exports = {
     createNewCommentUnderPosts,
     totalCommentForSinglePosts,
+    updatePostCommentsById,
+    getReportedCommentForAdmins
 }

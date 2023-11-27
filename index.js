@@ -13,6 +13,7 @@ const userRoute = require('./src/routes/userRouter');
 const authenticationRoute = require('./src/routes/authenticaionRoute');
 const tagRoute = require('./src/routes/tagRoute');
 const { adminAnalityces } = require('./src/controllers/adminAnaliticsController');
+const searchTagRouter = require('./src/routes/searchTagRoutes');
 
 // Database connected
 connectDatabase()
@@ -21,7 +22,7 @@ connectDatabase()
 // Middlewire
 app.use(
     cors({
-      origin: ['http://localhost:5173'],
+      origin: ['http://localhost:5173','https://assignment-12-5d967.web.app'],
       credentials: true,
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     })
@@ -38,6 +39,7 @@ app.use('/', paymentRoute)
 app.use('/', commentRoute)
 app.use('/', authenticationRoute)
 app.use('/', tagRoute)
+app.use('/', searchTagRouter)
 app.get('/admin-analitics', adminAnalityces)
 
 
