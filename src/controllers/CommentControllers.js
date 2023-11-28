@@ -89,9 +89,27 @@ const updatePostCommentsById = async (req, res) => {
     }
 }
 
+// Reported comment delete by ID
+const reportedCommentDeleteById = async (req, res) => {
+    try {
+        const id = req.params?.id;
+        const comment = await Comment.findByIdAndDelete(id);
+        res.status(200).send({
+            message : "Deleted",
+            success: true,
+        })
+    } catch (error) {
+        res.status(500).send({
+            message : "Somthing wrong",
+            success: false,
+        })
+    }
+}
+
 module.exports = {
     createNewCommentUnderPosts,
     totalCommentForSinglePosts,
     updatePostCommentsById,
-    getReportedCommentForAdmins
+    getReportedCommentForAdmins,
+    reportedCommentDeleteById
 }

@@ -25,22 +25,49 @@ const getAllPosts = async (req, res) => {
         const search = req?.query?.search;
         const limit = 5;
         const searchVal = new RegExp(".*"+search+".*", 'i');
+        const sort = req.query?.sort;     
 
-        
-        const posts = await Post.find({visivility:true, tag:searchVal}).skip((page-1)*limit).limit(limit).sort('-_id');
         const count = await Post.find({visivility:true}).countDocuments();
-        // const aggre = await Post.aggregate([
-        //     {
-        //       $addFields: {
-        //         voteDifference: { $subtract: ['$upVote', '$downVote'] }
-        //       }
-        //     },
-        //     {
-        //       $sort: { voteDifference: -1 }
-        //     }
-        // ])
-        // console.log(aggre);
+        // Shorting value for vote counter by descending
+        if( sort === 'desc' ){
+            const sortPosts = await Post.aggregate([
+                {
+                    $match: {
+                        visivility: true,
+                        tag : searchVal,
+                    }
+                },
+                {
+                    $addFields:{
+                        voteDifference : {$subtract:['$upVote','$downVote']}
+                    }
+                },
+                {
+                    $sort : {
+                        voteDifference : -1
+                    }
+                },
+                {
+                    $skip: ( page - 1) * limit
+                },
+                {
+                    $limit : limit,
+                },
+                
+            ])
 
+            return res.send({
+                success : true,
+                data: sortPosts,
+                total:count,
+            })
+        }
+
+        // Default post display
+        const posts = await Post.find(
+            {visivility:true, tag:searchVal}
+            ).skip((page-1)*limit).limit(limit).sort('-_id')
+      
         res.send({
             success : true,
             data: posts,
