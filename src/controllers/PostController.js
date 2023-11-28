@@ -5,6 +5,17 @@ const PostVoteHistory = require("../models/PostVoteHistory");
 const createNewPost = async (req, res) => {
     const post = req.body;
     try {
+
+        const paramsEmail = req.query?.email;
+        const tokenEmail = req.user?.email;
+        if(paramsEmail !== tokenEmail){
+            return res.status(401).send({
+                success: false,
+                message : "Invalid request",
+            })
+        }
+
+
         const result = await Post.create(post);
         res.send({
             success : true,
@@ -84,6 +95,14 @@ const getAllPosts = async (req, res) => {
 // get all woner posts
 const getAllOwnerPosts = async (req, res) => {
     try {
+        const paramsEmail = req.params?.email;
+        const tokenEmail = req.user?.email;
+        if(paramsEmail !== tokenEmail){
+            return res.status(401).send({
+                success: false,
+                message : "Invalid request",
+            })
+        }
         const posts = await Post.find({authorEmail:req.params?.email});
         res.send({
             success : true,
@@ -155,6 +174,15 @@ const getSinglePostById = async (req, res) => {
 // update posts
 const updatePostsById = async (req, res) => {
     try {
+        const paramsEmail = req.query?.email;
+        const tokenEmail = req.user?.email;
+        if(paramsEmail !== tokenEmail){
+            return res.status(401).send({
+                success: false,
+                message : "Invalid request",
+            })
+        }
+
         const id = req.params?.id;
         const post = await Post.findByIdAndUpdate(id, req.body, {
             new : true,
@@ -183,6 +211,14 @@ const updatePostsById = async (req, res) => {
 // Delete posts
 const deletePostsById = async(req, res) => {
     try {
+        const queryEmail = req.query?.email;
+        const tokenEmail = req.user?.email;
+        if(queryEmail !== tokenEmail){
+            return res.status(401).send({
+                success: false,
+                message : "Invalid request",
+            })
+        }
         const id = req?.params?.id;
         const post = await Post.findByIdAndDelete(id);
         if(!post){

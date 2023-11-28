@@ -7,7 +7,7 @@ const { isAdmin } = require('../middleware/isAdmin');
 
 
 // Create new user
-userRoute.get("/users",verifyToken, isAdmin, getAllUsers );
+userRoute.get("/users", verifyToken, isAdmin, getAllUsers );
 userRoute.post("/users", createUser );
 userRoute.get('/user/:email',verifyToken, findUserByEmail );
 userRoute.patch('/user/:email', updateUserByEmail)

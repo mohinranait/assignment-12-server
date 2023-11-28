@@ -3,10 +3,19 @@ const User = require("../models/User");
 // Get all users
 const getAllUsers = async (req, res) => {
     try {
-        const search = req.query?.search||'';
+        const search = req.query?.search || '';
         const searchRegEx = new RegExp(".*"+ search + '.*','i')
         let query = {
-            userName : {$regex: searchRegEx }
+            userName : { $regex: searchRegEx }
+        }
+        const queryEmail = req.query?.email;
+        const tokenEmal = req.user?.email;
+
+        if(queryEmail !== tokenEmal){
+            return res.status(401).send({
+                success: false,
+                message : "invalid access",
+            })
         }
 
         const users = await User.find(query);
@@ -47,7 +56,15 @@ const createUser =  async (req, res) => {
 const findUserByEmail = async (req, res) => {
     try {
         // console.log(req.params?.email);
-        const user = await User.findOne({email:req.params?.email});
+        const email = req.params?.email;
+        const tokenEmal = req.user?.email;
+        if(email !== tokenEmal){
+            return res.status(401).send({
+                success: false,
+                message : "Not found",
+            })
+        }
+        const user = await User.findOne({email:email});
         if(!user){
             return res.status(404).send({
                 success: false,
@@ -102,7 +119,14 @@ const existsUserForUserName = async (req, res) => {
 // is Admin check
 const checkAdmin = async (req, res) => {
     try {
-        // console.log(req?.params?.email);
+        const paramsEmail = req?.params?.email;
+        const tokenEmail = req.user?.email;
+        if(paramsEmail !== tokenEmail){
+            return res.status(401).send({
+                success: false,
+                message : "Invalid request",
+            })
+        }
         const user = await User.findOne({email:req.params?.email});
         if(!user){
             return res.status(404).send({

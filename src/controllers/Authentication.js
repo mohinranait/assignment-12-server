@@ -14,7 +14,6 @@ const createJwtToken = async (req, res) => {
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
         }).send({
             status: true,
-            token: token
         })
     } catch (error) {
         res.send({
