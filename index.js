@@ -15,7 +15,7 @@ const tagRoute = require('./src/routes/tagRoute');
 const { adminAnalityces } = require('./src/controllers/adminAnaliticsController');
 const searchTagRouter = require('./src/routes/searchTagRoutes');
 
-// Database connected
+// Database connected 
 connectDatabase()
 
 
@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
 app.all('*', (req,res, next) => {
     // console.log('all');
     res.status(404).send({
-        message : "Page not founded",
+        message : "Page not founded 404",
     })
 })
 
