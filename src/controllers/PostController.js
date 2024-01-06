@@ -117,6 +117,24 @@ const getAllOwnerPosts = async (req, res) => {
 }
 
 // get all woner posts
+const getAllOwnerPostsPublic = async (req, res) => {
+    try {
+        const email = req.params?.email;
+       console.log('public',email);
+        const posts = await Post.find({authorEmail:email})
+        res.send({
+            success : true,
+            data: posts,
+        })
+    } catch (error) {
+        res.send({
+            success : false,
+            message : "Somthing Wrong",
+        })
+    }
+}
+
+// get all woner posts
 const getAllOwnerDesc = async (req, res) => {
     try {
         const posts = await Post.find({authorEmail:req.params?.email}).sort('_id');
@@ -294,5 +312,5 @@ module.exports = {
     getAllOwnerDesc,
     deletePostsById,
     makeVoteInPosts,
-
+    getAllOwnerPostsPublic,
 }

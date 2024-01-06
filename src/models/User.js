@@ -20,7 +20,22 @@ const userSchema = new Schema({
     role: {
         type : String,
         default : 'user',
-    }
+    },
+    avater: {
+        type : String,
+    },
+    bio: {
+        type : String,
+    },
+    address: {
+        type : String,
+    },
+    followers: [{
+        type : String,
+    }],
+    following: [{
+        type : String,
+    }],
 })
 
 const User = model("User", userSchema);

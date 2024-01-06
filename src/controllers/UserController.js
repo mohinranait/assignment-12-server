@@ -80,9 +80,32 @@ const findUserByEmail = async (req, res) => {
     }
 }
 
+// Find a single user by ID
+const findUserBySingleEmail = async (req, res) => {
+    try {
+        // console.log(req.params?.email);
+        const email = req.params?.email;
+      
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(404).send({
+                success: false,
+                message : "Not found",
+            })
+        }
+        res.send(user);
+    } catch (error) {
+        res.send({
+            success: false,
+            message : error.message,
+        })
+    }
+}
+
 // Update a user information using email address
 const updateUserByEmail = async (req, res) => {
     try {
+      
         const userData = req.body;
         const user = await User.findOneAndUpdate({email:req.params?.email} , userData, {returnOriginal:false})
         res.send(user);
@@ -167,6 +190,48 @@ const makeAdmin = async (req, res) => {
     }
 }
 
+// my followers
+const myFollowers = async (req, res) => {
+    try {
+        const id = req.params?.id;
+        const user = await User.findById(id);
+        const users = await User.find({});
+        const followersIds = user?.followers;
+        const myFollowersUser = [];
+        followersIds?.forEach( (item) => {
+            const user = users?.find(user => user?._id == item)
+            if(user){
+                myFollowersUser.push(user)
+            }
+        })
+       
+        res.send(myFollowersUser)
+    } catch (error) {
+        
+    }
+}
+
+// my followers
+const myFolloings = async (req, res) => {
+    try {
+        const id = req.params?.id;
+        const user = await User.findById(id);
+        const users = await User.find({});
+        const follingsIds = user?.following;
+        const myFolloings = [];
+        follingsIds?.forEach( (item) => {
+            const user = users?.find(user => user?._id == item)
+            if(user){
+                myFolloings.push(user)
+            }
+        })
+       
+        res.send(myFolloings)
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     createUser,
     findUserByEmail,
@@ -174,5 +239,8 @@ module.exports = {
     checkAdmin,
     existsUserForUserName,
     getAllUsers,
-    makeAdmin
+    makeAdmin,
+    findUserBySingleEmail,
+    myFollowers,
+    myFolloings
 }
